@@ -1,0 +1,2 @@
+class NimbaException(Exception):
+    pass
