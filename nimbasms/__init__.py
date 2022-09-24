@@ -33,6 +33,10 @@ class Response(object):
 
     @property
     def text(self):
+        return self.content
+
+    @property
+    def data(self):
         return json.loads(self.content)
 
     def __repr__(self):
