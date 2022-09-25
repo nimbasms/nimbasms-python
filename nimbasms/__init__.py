@@ -148,20 +148,20 @@ class NimbaHttpClient(HttpClient):
 class Client(object):
     """A client for accessing the Nimba SMS API."""
 
-    def __init__(self, account_sid=None, token=None, http_client=None):
+    def __init__(self, account_sid=None, access_token=None):
         """
         Initializes the Nimba SMS Client
 
         :param str account_sid: Account SID
-        :param str token: Token authenticate
+        :param str access_token: Token authenticate
         """
         self.account_sid = account_sid
-        self.token = token
+        self.access_token = access_token
 
-        if not self.account_sid or not self.token:
+        if not self.account_sid or not self.access_token:
             raise NimbaException("Credentials are required"
                     " to create a NimbaClient")
-        self.auth = (self.account_sid, self.token)
+        self.auth = (self.account_sid, self.access_token)
 
         self.http_client = NimbaHttpClient()
 
