@@ -66,7 +66,7 @@ class Messages(object):
             }
         )
 
-    def request_message(self, uri):
+    def request_message(self, uri, params={}):
         response = self.client.request(
             method='GET',
             uri=uri
@@ -77,12 +77,22 @@ class Messages(object):
             self._count = response.data['count']
         return response
 
-    def list(self):
+    def list(self, limit:int=20, offset:int=1):
         """
         List messages
+
+        :param int limit: Limit messages request
+        :param int offset: offset to beging reqeust message
         """
+        if not limit or limit <= 0:
+            raise ValueError('Limit must be positive Integer')
+        if offset < 1:
+            raise ValueError('Offset must be greater than 1')
         uri='{}/v1/messages/'.format(self.base_url)
-        return self.request_message(uri)
+        return self.request_message(uri, {
+            'limit': limit,
+            'offset': offset
+        })
 
     def next(self):
         """
