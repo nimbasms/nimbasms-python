@@ -34,7 +34,7 @@ if response.ok:
     for m in some_messages:
         print(m)
 
-# Get messages in smaller pages...
+# send mesage...
 print('Sending a message...')
 response = client.messages.create(to=['XXXX'],
             sender_name='YYYY', message='Hi Nimba!')
