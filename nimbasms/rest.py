@@ -1,10 +1,9 @@
 class Accounts(object):
-
     def __init__(self, client):
         """
         Initialize Accounts
         """
-        self.base_url = 'http://api.dev.com:9001'
+        self.base_url = 'https://api.nimbasms.com'
         self.client = client
 
     def __repr__(self):
@@ -28,12 +27,11 @@ class Accounts(object):
 
 
 class Messages(object):
-
     def __init__(self, client):
         """
         Initialize Messages
         """
-        self.base_url = 'http://api.dev.com:9001'
+        self.base_url = 'https://api.nimbasms.com'
         self.client = client
         self._next = None
         self._previous = None
