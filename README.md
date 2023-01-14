@@ -14,6 +14,8 @@ from nimbasms import Client
 ACCOUNT_SID = 'XXXX'
 AUTH_TOKEN = 'XXXX'
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
+logging.basicConfig()
+logging.basicConfig(filename='./log.txt') # or loging in file
 client.http_client.logger.setLevel(logging.INFO)
 
 # Get your account balance

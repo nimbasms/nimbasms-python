@@ -12,6 +12,8 @@ def example():
     Some example usage of NIMBA SMS API with python client
     """
     client = Client(ACCOUNT_SID, AUTH_TOKEN)
+    logging.basicConfig()
+    logging.basicConfig(filename='./log.txt') # or loging in file
     client.http_client.logger.setLevel(logging.INFO)
 
     # Get your account balance
