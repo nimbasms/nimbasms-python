@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="nimbasms",
-    version="0.0.1",
+    version="1.0.1",
     author="Nimba SMS",
     description="Python Client Nimba SMS API",
     long_description=long_description,
