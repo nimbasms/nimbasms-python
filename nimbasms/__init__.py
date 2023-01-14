@@ -86,7 +86,6 @@ class NimbaHttpClient(HttpClient):
         :param dict headers: HTTP Headers to send with the request
         :param tuple auth: Basic Auth arguments
         :param float timeout: Socket/Read timeout for the request
-        :param boolean allow_redirects: Whether or not to allow reidrects
 
         :return: An http response
         """
@@ -167,6 +166,9 @@ class Client(object):
 
         self._messages = None
         self._accounts = None
+        self._contacts = None
+        self._groups = None
+        self._sendernames = None
 
     def request(self, method, uri, params=None, data=None,
                     auth=None, headers=None, timeout=None):
@@ -238,3 +240,39 @@ class Client(object):
             from nimbasms.rest import Messages
             self._messages = Messages(self)
         return self._messages
+
+    @property
+    def contacts(self):
+        """
+        Contacts Contacts
+
+        :returns Contacts NimbaAPI
+        """
+        if self._contacts is None:
+            from nimbasms.rest import Contacts
+            self._contacts = Contacts(self)
+        return self._contacts
+
+    @property
+    def groups(self):
+        """
+        Group Accounts
+        
+        :returns Groups NimbaAPI
+        """
+        if self._groups is None:
+            from nimbasms.rest import Groups
+            self._groups = Groups(self)
+        return self._groups
+
+    @property
+    def sendernames(self):
+        """
+        Sendername Accounts
+        
+        :returns Sendername NimbaAPI
+        """
+        if self._sendernames is None:
+            from nimbasms.rest import SenderNames
+            self._sendernames = SenderNames(self)
+        return self._sendernames
