@@ -1,17 +1,39 @@
+"""
+A Nimba SMS Client API.
+
+This module contains Class Client manager services available in API : developers.nimbasms.com
+
+Dependencies
+-----------
+requests : A library for HTTP Request
+
+class
+---------
+HTTPClient : Abstract class representing HTTP Client
+Response: Response representing data output.
+Client : Manager all services APIs.
+"""
+
 import logging
 import platform
 import json
 
+from urllib.parse import urlencode
 from requests import Request, Session, hooks
 from requests.adapters import HTTPAdapter
-from urllib.parse import urlencode
-from nimbasms.execptions import NimbaException
+from nimbasms.execptions import NimbaSMSException
+
+from nimbasms.rest import Accounts
+from nimbasms.rest import Contacts
+from nimbasms.rest import Groups
+from nimbasms.rest import Messages
+from nimbasms.rest import SenderNames
 
 __version__ = '1.0.0'
 
 _logger = logging.getLogger('nimbasms')
 
-class HttpClient(object):
+class HttpClient:
     """
     An Abstract class representing an HTTP client.
     """
@@ -23,7 +45,10 @@ class HttpClient(object):
         raise NimbaSMSException('HttpClient is a an abstract class')
 
 
-class Response(object):
+class Response:
+    """
+    Representing data output API calls.
+    """
     def __init__(self, status_code, text, headers=None):
         self.content = text
         self.headers = headers
@@ -33,14 +58,20 @@ class Response(object):
 
     @property
     def text(self):
+        """
+        Content output byte
+        """
         return self.content
 
     @property
     def data(self):
+        """
+        Output data response APIs
+        """
         return json.loads(self.content)
 
     def __repr__(self):
-        return 'HTTP {} {}'.format(self.status_code, self.content)
+        return 'HTTP {self.status_code} {self.content}'
 
 
 class NimbaHttpClient(HttpClient):
@@ -120,31 +151,33 @@ class NimbaHttpClient(HttpClient):
         return self.last_response
 
     def _log_request(self, kwargs):
+        """
+        Logger request APIs
+        """
         self.logger.info('-- BEGIN Nimba SMS API Request --')
 
         if kwargs['params']:
-            self.logger.info('{} Request: {}?{}'.format(kwargs['method'],
-                                kwargs['url'], urlencode(kwargs['params'])))
-            self.logger.info('Query Params: {}'.format(kwargs['params']))
+            self.logger.info(
+                f"{kwargs['method']} Request: {kwargs['url']}?{urlencode(kwargs['params'])}")
+            self.logger.info(f"Query Params: {kwargs['params']}")
         else:
-            self.logger.info('{} Request: {}'.format(kwargs['method'],
-                                kwargs['url']))
+            self.logger.info(f"{kwargs['method']} Request: {kwargs['url']}")
 
         if kwargs['headers']:
             self.logger.info('Headers:')
             for key, value in kwargs['headers'].items():
                 #Do not log authorization headers
                 if 'authorization' not in key.lower():
-                    self.logger.info('{} : {}'.format(key, value))
+                    self.logger.info(f'{key} : {value}')
 
         self.logger.info('-- END Nimba SMS API Request --')
 
     def _log_response(self, response):
-        self.logger.info('Response Status Code: {}'.format(response.status_code))
-        self.logger.info('Response Headers: {}'.format(response.headers))
+        self.logger.info(f'Response Status Code: {response.status_code}')
+        self.logger.info(f'Response Headers: {response.headers}')
 
 
-class Client(object):
+class Client:
     """A client for accessing the Nimba SMS API."""
 
     def __init__(self, account_sid=None, access_token=None):
@@ -154,13 +187,10 @@ class Client(object):
         :param str account_sid: Account SID
         :param str access_token: Token authenticate
         """
-        self.account_sid = account_sid
-        self.access_token = access_token
-
-        if not self.account_sid or not self.access_token:
-            raise NimbaException("Credentials are required"
+        if not account_sid or not access_token:
+            raise NimbaSMSException("Credentials are required"
                     " to create a NimbaClient")
-        self.auth = (self.account_sid, self.access_token)
+        self.auth = (account_sid, access_token)
 
         self.http_client = NimbaHttpClient()
 
@@ -193,12 +223,8 @@ class Client(object):
         os_name = platform.system()
         os_arch = platform.machine()
         python_version = platform.python_version()
-        headers['User-Agent'] = 'nimba-python/{} ({} {}) Python/{}'.format(
-            pkg_version,
-            os_name,
-            os_arch,
-            python_version
-        )
+        headers['User-Agent'] = (
+            f'nimba-python/{pkg_version} ({os_name} {os_arch}) Python/{python_version}')
         headers['X-Nimba-Client'] = 'utf-8'
 
         if method == 'POST' and 'Content-Type' not in headers:
@@ -225,7 +251,6 @@ class Client(object):
         :returns Accounts
         """
         if self._accounts is None:
-            from nimbasms.rest import Accounts
             self._accounts = Accounts(self)
         return self._accounts
 
@@ -237,7 +262,6 @@ class Client(object):
         :returns Messages NimbaAPI
         """
         if self._messages is None:
-            from nimbasms.rest import Messages
             self._messages = Messages(self)
         return self._messages
 
@@ -249,30 +273,27 @@ class Client(object):
         :returns Contacts NimbaAPI
         """
         if self._contacts is None:
-            from nimbasms.rest import Contacts
             self._contacts = Contacts(self)
         return self._contacts
 
     @property
     def groups(self):
         """
-        Group Accounts
-        
+        Group Accounts.
+
         :returns Groups NimbaAPI
         """
         if self._groups is None:
-            from nimbasms.rest import Groups
             self._groups = Groups(self)
         return self._groups
 
     @property
     def sendernames(self):
         """
-        Sendername Accounts
-        
+        Sendername Accounts.
+
         :returns Sendername NimbaAPI
         """
         if self._sendernames is None:
-            from nimbasms.rest import SenderNames
             self._sendernames = SenderNames(self)
         return self._sendernames
