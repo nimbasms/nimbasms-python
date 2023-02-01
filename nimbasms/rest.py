@@ -1,21 +1,53 @@
+"""
+A Nimba SMS Client Rest API.
+
+This module contains Class Rest Client manager services.
+
+Dependencies
+-----------
+List : Default library typing
+
+class
+---------
+BaseRest : Abstract class representing rest client
+Accounts: Account service.
+Groups : Group Services.
+SenderNames : Sender Name Services.
+Contacts : Contact Services.
+Messages : Messages Services.
+"""
+
 from typing import List
 
 
-class BaseRest(object):
+class BaseRest:
+    """
+    Base Rest client.
+    """
     def __init__(self, client):
+        """
+        Iniatialize client rest with base url
+        """
         self.base_url = 'https://api.nimbasms.com'
         self.client = client
 
     def __repr__(self):
+        """
+        Abstract Representing Serivce
+        """
         raise NotImplementedError
 
 
 class Accounts(BaseRest):
+    """
+    Manage Account Service.
+    """
     def __init__(self, client):
         """
         Initialize Accounts
         """
-        super(Accounts, self).__init__(client)
+        super().__init__(client)
+        self.representation = '<Nimba.Accounts>'
 
     def __repr__(self):
         """
@@ -24,7 +56,7 @@ class Accounts(BaseRest):
         :returns Machine friendly representation
         :rtype: str
         """
-        return '<Nimba.Accounts>'
+        return self.representation
 
     def get(self):
         """
@@ -32,16 +64,19 @@ class Accounts(BaseRest):
         """
         return self.client.request(
             method='GET',
-            uri='{}/v1/accounts'.format(self.base_url),
+            uri=f'{self.base_url}/v1/accounts',
         )
 
 
 class Groups(BaseRest):
+    """
+    Manage Group Service.
+    """
     def __init__(self, client):
         """
         Initialize Groups
         """
-        super(Groups, self).__init__(client)
+        super().__init__(client)
         self._next = None
         self._previous = None
         self._count = 0
@@ -55,11 +90,14 @@ class Groups(BaseRest):
         """
         return '<Nimba.Groups>'
 
-    def request_message(self, uri, params={}):
+    def request_message(self, uri, params=None):
+        """
+        Make HTTP request with Client.
+        """
         response = self.client.request(
             method='GET',
             uri=uri,
-            params=params
+            params=params or {}
         )
         if response.ok:
             self._next = response.data['next']
@@ -92,9 +130,9 @@ class Groups(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
-        uri='{}/v1/groups'.format(self.base_url)
+        uri=f'{self.base_url}/v1/groups'
         return self.request_message(uri, {
             'limit': limit,
             'offset': offset
@@ -102,11 +140,14 @@ class Groups(BaseRest):
 
 
 class SenderNames(BaseRest):
+    """
+    Manager SenderName service.
+    """
     def __init__(self, client):
         """
         Initialize SenderName
         """
-        super(SenderNames, self).__init__(client)
+        super().__init__(client)
         self._next = None
         self._previous = None
         self._count = 0
@@ -120,11 +161,14 @@ class SenderNames(BaseRest):
         """
         return '<Nimba.SenderNames>'
 
-    def request_message(self, uri, params={}):
+    def request_message(self, uri, params=None):
+        """
+        Make HTTP request with Client.
+        """
         response = self.client.request(
             method='GET',
             uri=uri,
-            params=params
+            params=params or {}
         )
         if response.ok:
             self._next = response.data['next']
@@ -157,9 +201,9 @@ class SenderNames(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
-        uri='{}/v1/sendernames'.format(self.base_url)
+        uri=f'{self.base_url}/v1/sendernames'
         return self.request_message(uri, {
             'limit': limit,
             'offset': offset
@@ -167,11 +211,14 @@ class SenderNames(BaseRest):
 
 
 class Contacts(BaseRest):
+    """
+    Manage Contact service.
+    """
     def __init__(self, client):
         """
         Initialize SenderName
         """
-        super(Contacts, self).__init__(client)
+        super().__init__(client)
         self._next = None
         self._previous = None
         self._count = 0
@@ -185,11 +232,14 @@ class Contacts(BaseRest):
         """
         return '<Nimba.Contacts>'
 
-    def request_message(self, uri, params={}):
+    def request_message(self, uri, params=None):
+        """
+        Make HTTP request with Client.
+        """
         response = self.client.request(
             method='GET',
             uri=uri,
-            params=params
+            params=params or {}
         )
         if response.ok:
             self._next = response.data['next']
@@ -213,7 +263,7 @@ class Contacts(BaseRest):
             return None
         return self.request_message(self._previous)
 
-    def list(self, limit: int=20, offset: int=1):
+    def list(self, limit: int=20, offset: int=0):
         """
         List contacts
 
@@ -222,9 +272,9 @@ class Contacts(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
-        uri='{}/v1/contacts'.format(self.base_url)
+        uri=f'{self.base_url}/v1/contacts'
         return self.request_message(uri, {
             'limit': limit,
             'offset': offset
@@ -245,17 +295,20 @@ class Contacts(BaseRest):
             data['groups'] = groups
         return self.client.request(
             method='POST',
-            uri='{}/v1/contacts'.format(self.base_url),
+            uri=f'{self.base_url}/v1/contacts',
             data=data
         )
 
 
 class Messages(BaseRest):
+    """
+    Manage Message Service.
+    """
     def __init__(self, client):
         """
         Initialize Messages
         """
-        super(Messages, self).__init__(client)
+        super().__init__(client)
         self._next = None
         self._previous = None
         self._count = 0
@@ -269,7 +322,7 @@ class Messages(BaseRest):
         """
         return '<Nimba.Messages>'
 
-    def create(self, to:list, sender_name:str, message:str):
+    def create(self, to: List[str], sender_name: str, message: str):
         """
         Create message for sending sms
 
@@ -279,7 +332,7 @@ class Messages(BaseRest):
         """
         return self.client.request(
             method='POST',
-            uri='{}/v1/messages'.format(self.base_url),
+            uri=f'{self.base_url}/v1/messages',
             data={
                 'to': to,
                 'sender_name': sender_name,
@@ -287,11 +340,14 @@ class Messages(BaseRest):
             }
         )
 
-    def request_message(self, uri, params={}):
+    def request_message(self, uri, params=None):
+        """
+        Make HTTP request with Client.
+        """
         response = self.client.request(
             method='GET',
             uri=uri,
-            params=params
+            params=params or {}
         )
         if response.ok:
             self._next = response.data['next']
@@ -324,9 +380,9 @@ class Messages(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
-        uri='{}/v1/messages'.format(self.base_url)
+        uri=f'{self.base_url}/v1/messages'
         return self.request_message(uri, {
             'limit': limit,
             'offset': offset
@@ -340,5 +396,5 @@ class Messages(BaseRest):
         """
         return self.client.request(
             method='GET',
-            uri='{}/v1/messages/{}'.format(self.base_url, messageid),
+            uri=f'{self.base_url}/v1/messages/{messageid}',
         )
