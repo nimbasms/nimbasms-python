@@ -1,0 +1,6 @@
+[MAIN]
+
+disable=
+	too-many-arguments,
+	too-few-public-methods,
+	invalid-name
