@@ -71,7 +71,7 @@ class Response:
         return json.loads(self.content)
 
     def __repr__(self):
-        return 'HTTP {self.status_code} {self.content}'
+        return f'HTTP {self.status_code} {self.content}'
 
 
 class NimbaHttpClient(HttpClient):

@@ -30,6 +30,8 @@ setuptools.setup(
     version="1.0.1",
     author="Nimba SMS",
     description="Python Client Nimba SMS API",
+    author_email='open-source@nimbasms.com',
+    url='https://github.com/nimbasms/nimbasms-python',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),

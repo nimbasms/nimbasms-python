@@ -130,7 +130,7 @@ class Groups(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
         uri=f'{self.base_url}/v1/groups'
         return self.request_message(uri, {
@@ -201,7 +201,7 @@ class SenderNames(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
         uri=f'{self.base_url}/v1/sendernames'
         return self.request_message(uri, {
@@ -263,7 +263,7 @@ class Contacts(BaseRest):
             return None
         return self.request_message(self._previous)
 
-    def list(self, limit: int=20, offset: int=1):
+    def list(self, limit: int=20, offset: int=0):
         """
         List contacts
 
@@ -272,7 +272,7 @@ class Contacts(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
         uri=f'{self.base_url}/v1/contacts'
         return self.request_message(uri, {
@@ -380,7 +380,7 @@ class Messages(BaseRest):
         """
         if not limit or limit < 0:
             raise ValueError('Limit must be positive Integer')
-        if offset < 1:
+        if offset < 0:
             raise ValueError('Offset must be greater than 1')
         uri=f'{self.base_url}/v1/messages'
         return self.request_message(uri, {
