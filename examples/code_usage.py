@@ -82,7 +82,7 @@ def send_message():
     # Get only last 10 messages
     response = client.messages.list(limit=10)
     if response.ok:
-        some_messages = some_messages.data
+        some_messages = response.data
         print('Here are the last 10 messages in your account:')
         for message in some_messages:
             print(message)
