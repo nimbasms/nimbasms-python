@@ -1,22 +1,29 @@
 # nimbasms-python
 A Python module for communicating with Nimba SMS API.
 
-## Installation
+# Table contents
+
+ - [Installation](#installation)
+ - [Check balance](#account)
+ - [Groups](#group)
+ - [Sendernames](#sendername)
+ - [Create Contacts](#contact)
+ - [Send Message](#message)
+ - [Logs](#log)
+
+
+## <a name="installation"></a> Installation
 ```sh
 pip install nimbasms
 ```
 
-## Usage
+## <a name="account"></a> Check balance
 ```python
-import logging
 from nimbasms import Client
 
 ACCOUNT_SID = 'XXXX'
 AUTH_TOKEN = 'XXXX'
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
-logging.basicConfig()
-logging.basicConfig(filename='./log.txt') # or loging in file
-client.http_client.logger.setLevel(logging.INFO)
 
 # Get your account balance
 response = client.accounts.get()
@@ -24,40 +31,79 @@ if response.ok:
     my_account = response.data
     print('My Account balance : {}'.format(my_account['balance']))
 
+```
 
-# Get groups
+
+## <a name="group"></a> Groups
+
+```python
+from nimbasms import Client
+
+ACCOUNT_SID = 'XXXX'
+AUTH_TOKEN = 'XXXX'
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
 response = client.groups.list()
 if response.ok:
     all_groups = response.data
     print('There are {} groupes'.format(len(all_messages)))
+```
 
 
-# Get Sendernames
+
+## <a name="sendername"></a> Sendernames
+
+```python
+from nimbasms import Client
+
+ACCOUNT_SID = 'XXXX'
+AUTH_TOKEN = 'XXXX'
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
 response = client.sendernames.list()
 if response.ok:
     all_sendernames = response.data
     for item in all_sendernames:
         print(item)
+```
 
 
-# Get Contact
+## <a name="contact"></a> Create Contact
+
+```python
+from nimbasms import Client
+
+ACCOUNT_SID = 'XXXX'
+AUTH_TOKEN = 'XXXX'
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
 response = client.contacts.list()
 if response.ok:
     all_contacts = response.data
     for item in all_contacts:
         print(item)
 
-
-# Create Contact
 # This contact will be added to the default contact list
 response = client.contacts.create(numero='224XXXXXXXXX')
 if response.ok:
     contact = response.data
+
 # Create with groups and name - name and groups are optional.
 response = client.contacts.create(numero='224XXXXXXXXX', name='Foo', groups=['API', 'Facebook Client'])
 if response.ok:
     contact = response.data
 
+```
+
+
+## <a name="message"></a> Send message
+
+```python
+from nimbasms import Client
+
+ACCOUNT_SID = 'XXXX'
+AUTH_TOKEN = 'XXXX'
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 # Get All messages
 response = client.messages.list()
@@ -85,6 +131,22 @@ if response.ok:
 response = client.messages.retrieve(messageid='XXXXXXXXXXXXXXXXXXXXX')
 if response.ok:
     print("Message retrieve : {}".format(response.data))
+```
+
+## <a name="log"></a> Logs
+
+```python
+import logging
+from nimbasms import Client
+
+ACCOUNT_SID = 'XXXX'
+AUTH_TOKEN = 'XXXX'
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+logging.basicConfig() # log in console
+logging.basicConfig(filename='./log.txt') # or loging in file
+client.http_client.logger.setLevel(logging.INFO)
+
+# ....
 ```
 
 ## Credit
