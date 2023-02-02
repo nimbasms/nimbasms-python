@@ -9,7 +9,7 @@ A Python module for communicating with Nimba SMS API.
  - [Sendernames](#sendername)
  - [Create Contacts](#contact)
  - [Send Message](#message)
- - [Logs](#log)
+ - [Logs Activities](#log)
 
 
 ## <a name="installation"></a> Installation
@@ -133,7 +133,7 @@ if response.ok:
     print("Message retrieve : {}".format(response.data))
 ```
 
-## <a name="log"></a> Logs
+## <a name="log"></a> Logs Activities
 
 ```python
 import logging
