@@ -12,7 +12,7 @@ even better than it is today! Here are the guidelines we'd like you to follow:
 ## <a name="question"></a> Got an API/Product Question or Problem?
 
  If you have questions about how to use `nimbasms-python`, please see our
-[docs][https://developers.nimbasms.com], and if you don't find the answer there, please contact
+[docs](https://developers.nimbasms.com), and if you don't find the answer there, please contact
 [help@nimbasms.com](mailto:help@nimbasms.com) with any issues you have.
 
 
