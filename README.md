@@ -1,7 +1,7 @@
 # nimbasms-python
 A Python module for communicating with Nimba SMS API.
 
-# Table contents
+# Usage
 
  - [Installation](#installation)
  - [Check balance](#account)
