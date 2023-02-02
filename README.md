@@ -89,7 +89,8 @@ if response.ok:
     contact = response.data
 
 # Create with groups and name - name and groups are optional.
-response = client.contacts.create(numero='224XXXXXXXXX', name='Foo', groups=['API', 'Facebook Client'])
+response = client.contacts.create(numero='224XXXXXXXXX', 
+    name='Foo', groups=['API', 'Facebook Client'])
 if response.ok:
     contact = response.data
 
