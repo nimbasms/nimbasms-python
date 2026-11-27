@@ -27,7 +27,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
     name="nimbasms",
-    version="1.0.2",
+    version="2.0.0",
     author="Nimba SMS",
     description="Python Client Nimba SMS API",
     author_email='open-source@nimbasms.com',
@@ -40,7 +40,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
-    py_modules=["nimbasms"],
-    install_requires=['requests']
+    python_requires='>=3.8',
+    install_requires=['requests>=2.31.0']
 )
