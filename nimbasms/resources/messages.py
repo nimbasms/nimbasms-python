@@ -48,7 +48,7 @@ class Messages(BaseRest):
         return self.request(method='POST', data=data)
 
     def list(self, limit=20, offset=0, sent_at=None, sent_at__lte=None,
-             sent_at__gte=None):
+             sent_at__gte=None, **filters):
         """
         List messages
 
@@ -64,6 +64,7 @@ class Messages(BaseRest):
             sent_at=sent_at,
             sent_at__lte=sent_at__lte,
             sent_at__gte=sent_at__gte,
+            **filters,
         )
 
     def retrieve(self, messageid):

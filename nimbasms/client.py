@@ -34,17 +34,19 @@ class Client:
             raise NimbaSMSException("Credentials are required"
                     " to create a NimbaClient")
         self.auth = (account_sid, access_token)
-
         self.http_client = NimbaHttpClient()
+        self._resources = {}
 
-        self._messages = None
-        self._accounts = None
-        self._contacts = None
-        self._groups = None
-        self._sendernames = None
-        self._verifications = None
-        self._purchases = None
-        self._extensions = None
+    def _manager(self, name, manager):
+        """
+        Return a cached service manager.
+
+        :param str name: Name of the service
+        :param manager: Manager class to instantiate
+        """
+        if name not in self._resources:
+            self._resources[name] = manager(self)
+        return self._resources[name]
 
     def request(self, method, uri, params=None, data=None,
                      auth=None, headers=None, timeout=None, files=None):
@@ -97,9 +99,7 @@ class Client:
 
         :returns Accounts
         """
-        if self._accounts is None:
-            self._accounts = Accounts(self)
-        return self._accounts
+        return self._manager('accounts', Accounts)
 
     @property
     def messages(self):
@@ -108,9 +108,7 @@ class Client:
 
         :returns Messages NimbaAPI
         """
-        if self._messages is None:
-            self._messages = Messages(self)
-        return self._messages
+        return self._manager('messages', Messages)
 
     @property
     def contacts(self):
@@ -119,9 +117,7 @@ class Client:
 
         :returns Contacts NimbaAPI
         """
-        if self._contacts is None:
-            self._contacts = Contacts(self)
-        return self._contacts
+        return self._manager('contacts', Contacts)
 
     @property
     def groups(self):
@@ -130,9 +126,7 @@ class Client:
 
         :returns Groups NimbaAPI
         """
-        if self._groups is None:
-            self._groups = Groups(self)
-        return self._groups
+        return self._manager('groups', Groups)
 
     @property
     def sendernames(self):
@@ -141,9 +135,7 @@ class Client:
 
         :returns Sendername NimbaAPI
         """
-        if self._sendernames is None:
-            self._sendernames = SenderNames(self)
-        return self._sendernames
+        return self._manager('sendernames', SenderNames)
 
     @property
     def verifications(self):
@@ -152,9 +144,7 @@ class Client:
 
         :returns Verifications NimbaAPI
         """
-        if self._verifications is None:
-            self._verifications = Verifications(self)
-        return self._verifications
+        return self._manager('verifications', Verifications)
 
     @property
     def purchases(self):
@@ -163,9 +153,7 @@ class Client:
 
         :returns Purchases NimbaAPI
         """
-        if self._purchases is None:
-            self._purchases = Purchases(self)
-        return self._purchases
+        return self._manager('purchases', Purchases)
 
     @property
     def extensions(self):
@@ -174,6 +162,4 @@ class Client:
 
         :returns Extensions NimbaAPI
         """
-        if self._extensions is None:
-            self._extensions = Extensions(self)
-        return self._extensions
+        return self._manager('extensions', Extensions)

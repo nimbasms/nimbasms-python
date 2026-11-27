@@ -7,7 +7,6 @@ implementation and the response wrapper returned by every API call.
 
 import json
 import logging
-import platform
 
 from urllib.parse import urlencode
 from requests import Request, Session, hooks
@@ -154,19 +153,20 @@ class NimbaHttpClient(HttpClient):
 
         if kwargs['params']:
             self.logger.info(
-                f"{kwargs['method']} Request: {kwargs['url']}?{urlencode(kwargs['params'])}")
-            self.logger.info(f"Query Params: {kwargs['params']}")
+                '%s Request: %s?%s',
+                kwargs['method'], kwargs['url'], urlencode(kwargs['params']))
+            self.logger.info('Query Params: %s', kwargs['params'])
         else:
-            self.logger.info(f"{kwargs['method']} Request: {kwargs['url']}")
+            self.logger.info('%s Request: %s', kwargs['method'], kwargs['url'])
 
         if kwargs['headers']:
             self.logger.info('Headers:')
             for key, value in kwargs['headers'].items():
                 if 'authorization' not in key.lower():
-                    self.logger.info(f'{key} : {value}')
+                    self.logger.info('%s : %s', key, value)
 
         self.logger.info('-- END Nimba SMS API Request --')
 
     def _log_response(self, response):
-        self.logger.info(f'Response Status Code: {response.status_code}')
-        self.logger.info(f'Response Headers: {response.headers}')
+        self.logger.info('Response Status Code: %s', response.status_code)
+        self.logger.info('Response Headers: %s', response.headers)
