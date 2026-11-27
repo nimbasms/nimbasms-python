@@ -122,6 +122,8 @@ class BaseRest:
         if not response.ok:
             return
         data = response.data
-        self._next = data['next']
-        self._previous = data['previous']
-        self._count = data['count']
+        if not isinstance(data, dict):
+            return
+        self._next = data.get('next')
+        self._previous = data.get('previous')
+        self._count = data.get('count', 0)

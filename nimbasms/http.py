@@ -52,9 +52,14 @@ class Response:
     @property
     def data(self):
         """
-        Output data response APIs
+        Output data response APIs, or None for an empty body
         """
-        return json.loads(self.content)
+        if not self.content:
+            return None
+        try:
+            return json.loads(self.content)
+        except (TypeError, ValueError):
+            return self.content
 
     def __repr__(self):
         return f'HTTP {self.status_code} {self.content}'
@@ -119,14 +124,17 @@ class NimbaHttpClient(HttpClient):
             'hooks': self.request_hooks,
             'files': files
         }
+        if isinstance(data, (dict, list)):
+            kwargs['json'] = data
+            kwargs['data'] = None
         self._log_request(kwargs)
 
         self.last_response = None
         session = self.session or Session()
         request = Request(**kwargs)
-        self.last_request = None
 
         prepped_request = session.prepare_request(request)
+        self.last_request = prepped_request
         settings = session.merge_environment_settings(prepped_request.url,
                                 self.proxy, None, None, None)
         settings['timeout'] = timeout if timeout is not None else self.timeout

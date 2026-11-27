@@ -72,10 +72,9 @@ class Client:
         python_version = platform.python_version()
         headers['User-Agent'] = (
             f'nimba-python/{pkg_version} ({os_name} {os_arch}) Python/{python_version}')
-        headers['X-Nimba-Client'] = 'utf-8'
 
-        if method == 'POST' and 'Content-Type' not in headers and not files:
-            headers['Content-Type'] = 'application/x-www-form-urlencoded'
+        if data is not None and 'Content-Type' not in headers and not files:
+            headers['Content-Type'] = 'application/json'
 
         if 'Accept' not in headers:
             headers['Accept'] = 'application/json'
