@@ -59,17 +59,17 @@ def add_contact():
         for contact in response.data['results']:
             print(contact)
 
-    response = client.contacts.create(numero='+224625126703')
+    response = client.contacts.create(numero='+126456789')
     if response.ok:
         print(response.data)
 
     response = client.contacts.create(
-        numero='+224625126703', name='Foo', groups=['API', 'Facebook Client'])
+        numero='+123456789', name='Foo', groups=['API', 'Facebook Client'])
     if response.ok:
         print(response.data)
 
     response = client.contacts.create(
-        numero='+224625126703', email='foo@example.com', groups=['API'])
+        numero='+123456789', email='foo@example.com', groups=['API'])
     if response.ok:
         print(response.data)
 
@@ -90,7 +90,7 @@ def send_message():
 def send_whatsapp_message():
     """Send a WhatsApp message with a validated template."""
     response = client.messages.create(
-        to=['+224625126703'], sender_name='CashMoov', channel='whatsapp',
+        to=['+123456789'], sender_name='Foo', channel='whatsapp',
         template_name='info',
         template_variables={'body': {'1': 'value 1', "2": 'value 2'}})
     if response.ok:
@@ -113,14 +113,10 @@ def send_email():
 def create_verification():
     """Request a verification code by SMS and by email."""
     response = client.verifications.create(
-        email='sumptring@gmail.com', code_length=5,
-        email_sender_name='sirapay@notification.nimbacore.com',
-        channels=['email'], message='Your verification code is: <1234>',
+        to='+123456789', message='Your verification code is: <1234>',
         expiry_time=5)
     if response.ok:
         print(f"Verification request : {response.data}")
-    else :
-        print(response.data)
 
     response = client.verifications.create(
         channels=['email'], email='client@example.com',
