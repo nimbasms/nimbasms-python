@@ -113,7 +113,9 @@ def send_email():
 def create_verification():
     """Request a verification code by SMS and by email."""
     response = client.verifications.create(
-        email='sumptring@gmail.com', code_length=5, email_sender_name="sirapay@notification.nimbacore.com", channels=["email"], message='Your verification code is: <1234>',
+        email='sumptring@gmail.com', code_length=5,
+        email_sender_name='sirapay@notification.nimbacore.com',
+        channels=['email'], message='Your verification code is: <1234>',
         expiry_time=5)
     if response.ok:
         print(f"Verification request : {response.data}")
