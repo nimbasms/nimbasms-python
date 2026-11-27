@@ -1,12 +1,11 @@
-"""Base resource manager shared by every Nimba SMS service."""
+"""Base resource managers shared by the Nimba SMS services."""
 
 
 class BaseRest:
     """
     Base Rest client.
 
-    Holds the common request and pagination logic used by all service
-    managers.
+    Holds the common request logic used by every service manager.
     """
     def __init__(self, client, resource):
         """
@@ -18,9 +17,6 @@ class BaseRest:
         self.base_url = 'https://api.nimbasms.com'
         self.client = client
         self.resource = resource
-        self._next = None
-        self._previous = None
-        self._count = 0
 
     @property
     def resource_url(self):
@@ -43,17 +39,6 @@ class BaseRest:
         """
         return {key: value for key, value in fields.items() if value is not None}
 
-    @staticmethod
-    def pagination(limit=20, offset=0):
-        """
-        Validate and build pagination query parameters.
-        """
-        if not limit or limit < 0:
-            raise ValueError('Limit must be positive Integer')
-        if offset < 0:
-            raise ValueError('Offset must be greater than 1')
-        return {'limit': limit, 'offset': offset}
-
     def request(self, method, uri=None, params=None, data=None, files=None):
         """
         Make HTTP request with Client.
@@ -71,6 +56,34 @@ class BaseRest:
             data=data,
             files=files,
         )
+
+
+class PaginatedRest(BaseRest):
+    """
+    Base manager for resources exposed through a paginated GET endpoint.
+
+    Managers without a list endpoint must inherit from :class:`BaseRest`
+    instead, so that no list or pagination method is exposed.
+    """
+    def __init__(self, client, resource):
+        """
+        Initialize the manager and its pagination state.
+        """
+        super().__init__(client, resource)
+        self._next = None
+        self._previous = None
+        self._count = 0
+
+    @staticmethod
+    def pagination(limit=20, offset=0):
+        """
+        Validate and build pagination query parameters.
+        """
+        if not limit or limit < 0:
+            raise ValueError('Limit must be positive Integer')
+        if offset < 0:
+            raise ValueError('Offset must be greater than 1')
+        return {'limit': limit, 'offset': offset}
 
     def list_url(self, url, params=None):
         """

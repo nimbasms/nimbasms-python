@@ -1,9 +1,9 @@
 """Extension service."""
 
-from nimbasms.resources.base import BaseRest
+from nimbasms.resources.base import PaginatedRest
 
 
-class Extensions(BaseRest):
+class Extensions(PaginatedRest):
     """
     Manage Extension service, including actions and pricing plans.
     """

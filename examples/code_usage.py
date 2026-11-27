@@ -41,6 +41,7 @@ def get_groups():
     response = client.groups.list()
     if response.ok:
         print(f"There are {response.data['count']} groups")
+        print(response.data['results'])
 
 
 def get_sendernames():
@@ -58,32 +59,23 @@ def add_contact():
         for contact in response.data['results']:
             print(contact)
 
-    response = client.contacts.create(numero='224XXXXXXXXX')
+    response = client.contacts.create(numero='+224625126703')
     if response.ok:
         print(response.data)
 
     response = client.contacts.create(
-        numero='224XXXXXXXXX', name='Foo', groups=['API', 'Facebook Client'])
+        numero='+224625126703', name='Foo', groups=['API', 'Facebook Client'])
     if response.ok:
         print(response.data)
 
     response = client.contacts.create(
-        numero='224XXXXXXXXX', email='foo@example.com', groups=['API'])
+        numero='+224625126703', email='foo@example.com', groups=['API'])
     if response.ok:
         print(response.data)
 
 
 def send_message():
-    """List, send and retrieve SMS messages."""
-    response = client.messages.list()
-    if response.ok:
-        print(f"There are {response.data['count']} messages in your account.")
-
-    response = client.messages.list(limit=10)
-    if response.ok:
-        for message in response.data['results']:
-            print(message)
-
+    """Send and retrieve SMS messages."""
     print('Sending a message...')
     response = client.messages.create(
         to=['XXXX'], sender_name='YYYY', message='Hi Nimba!')
@@ -98,11 +90,13 @@ def send_message():
 def send_whatsapp_message():
     """Send a WhatsApp message with a validated template."""
     response = client.messages.create(
-        to=['224XXXXXXXXX'], sender_name='YYYY', channel='whatsapp',
-        template_name='my_template',
-        template_variables={'body': {'1': 'value 1'}})
+        to=['+224625126703'], sender_name='CashMoov', channel='whatsapp',
+        template_name='info',
+        template_variables={'body': {'1': 'value 1', "2": 'value 2'}})
     if response.ok:
         print(f'WhatsApp response : {response.data}')
+    else :
+        print(response.data)
 
 
 def send_email():
@@ -119,10 +113,12 @@ def send_email():
 def create_verification():
     """Request a verification code by SMS and by email."""
     response = client.verifications.create(
-        to='+123456789', message='Your verification code is: <1234>',
+        email='sumptring@gmail.com', code_length=5, email_sender_name="sirapay@notification.nimbacore.com", channels=["email"], message='Your verification code is: <1234>',
         expiry_time=5)
     if response.ok:
         print(f"Verification request : {response.data}")
+    else :
+        print(response.data)
 
     response = client.verifications.create(
         channels=['email'], email='client@example.com',
@@ -134,9 +130,11 @@ def create_verification():
 def verify_code():
     """Check a verification code."""
     response = client.verifications.verify(
-        verificationid='XXXXXXXXXXXXXXXXXXXXX', code='1234')
+        verificationid='e132dc0f-2fa8-46f6-8d0b-1618bb74541f', code='41747')
     if response.ok:
         print(f"Verification result : {response.data}")
+    else:
+        print(response.data)
 
 
 def list_extensions():
@@ -145,6 +143,41 @@ def list_extensions():
     if response.ok:
         for extension in response.data['results']:
             print(extension)
+
+
+def get_contacts():
+    """List contacts."""
+    response = client.contacts.list()
+    if response.ok:
+        for contact in response.data['results']:
+            print(contact)
+
+
+def retrieve_message():
+    """Retrieve a message with the historical method name."""
+    response = client.messages.retrieve(messageid='XXXXXXXXXXXXXXXXXXXXX')
+    if response.ok:
+        print(f"Message retrieve : {response.data}")
+
+
+def create_verification_whatsapp():
+    """Request a verification code by WhatsApp."""
+    response = client.verifications.create(
+        to='+123456789', channels=['whatsapp'], sender_name='YYYY')
+    if response.ok:
+        print(f"WhatsApp verification request : {response.data}")
+
+
+def create_verification_multi_channel():
+    """Request a verification code on several channels."""
+    response = client.verifications.create(
+        to='+123456789', channels=['sms', 'whatsapp', 'email'],
+        sender_name='YYYY', whatsapp_sender_name='YYYY',
+        email='client@example.com', email_sender_name='no-reply@example.com',
+        email_template_name='verification', email_subject='Your verification code',
+        expiry_time=10, attempts=3, code_length=6, language='en')
+    if response.ok:
+        print(f"Multi-channel verification request : {response.data}")
 
 
 if __name__ == '__main__':

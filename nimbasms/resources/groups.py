@@ -1,9 +1,9 @@
 """Group service."""
 
-from nimbasms.resources.base import BaseRest
+from nimbasms.resources.base import PaginatedRest
 
 
-class Groups(BaseRest):
+class Groups(PaginatedRest):
     """
     Manage Group Service.
     """

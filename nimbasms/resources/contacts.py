@@ -2,10 +2,10 @@
 
 from typing import List
 
-from nimbasms.resources.base import BaseRest
+from nimbasms.resources.base import PaginatedRest
 
 
-class Contacts(BaseRest):
+class Contacts(PaginatedRest):
     """
     Manage Contact service.
     """

@@ -105,17 +105,6 @@ response = client.contacts.create(
 ## <a name="message"></a> Send message
 
 ```python
-# Get all messages
-response = client.messages.list()
-if response.ok:
-    print('There are {} messages'.format(response.data['count']))
-
-# Get the last 10 messages, optionally filtered by date
-response = client.messages.list(limit=10, sent_at__gte='2026-01-01T00:00:00Z')
-if response.ok:
-    for message in response.data['results']:
-        print(message)
-
 # Send an SMS
 response = client.messages.create(
     to=['224XXXXXXXXX'], sender_name='YYYY', message='Hi Nimba!')

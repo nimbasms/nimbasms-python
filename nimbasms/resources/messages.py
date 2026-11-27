@@ -47,26 +47,6 @@ class Messages(BaseRest):
         )
         return self.request(method='POST', data=data)
 
-    def list(self, limit=20, offset=0, sent_at=None, sent_at__lte=None,
-             sent_at__gte=None, **filters):
-        """
-        List messages
-
-        :param int limit: Limit messages request
-        :param int offset: Offset to begin request
-        :param str sent_at: Filter messages sent at a given date
-        :param str sent_at__lte: Filter messages sent before a given date
-        :param str sent_at__gte: Filter messages sent after a given date
-        """
-        return super().list(
-            limit=limit,
-            offset=offset,
-            sent_at=sent_at,
-            sent_at__lte=sent_at__lte,
-            sent_at__gte=sent_at__gte,
-            **filters,
-        )
-
     def retrieve(self, messageid):
         """
         Retrieve a message

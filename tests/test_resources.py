@@ -8,6 +8,7 @@ from nimbasms.http import Response
 from nimbasms.resources import Accounts
 from nimbasms.resources import Contacts
 from nimbasms.resources import Extensions
+from nimbasms.resources import Groups
 from nimbasms.resources import Messages
 from nimbasms.resources import Purchases
 from nimbasms.resources import Verifications
@@ -35,39 +36,47 @@ class PaginationTests(unittest.TestCase):
     def test_list_query_parameters(self):
         """Filters are merged with pagination parameters."""
         client = RecordingClient()
-        Messages(client).list(limit=10, offset=5, sent_at__gte='2026-01-01')
+        Groups(client).list(limit=10, offset=5, name='VIP')
         self.assertEqual(client.calls[0]['params'], {
             'limit': 10,
             'offset': 5,
-            'sent_at__gte': '2026-01-01',
+            'name': 'VIP',
         })
 
     def test_invalid_pagination(self):
         """Invalid limits and offsets are rejected before any request."""
         client = RecordingClient()
-        messages = Messages(client)
+        groups = Groups(client)
         for limit, offset in ((0, 0), (-1, 0), (20, -1)):
             with self.assertRaises(ValueError):
-                messages.list(limit=limit, offset=offset)
+                groups.list(limit=limit, offset=offset)
         self.assertEqual(client.calls, [])
 
     def test_next_uses_returned_url(self):
         """Next page follows the URL returned by the API."""
         client = RecordingClient(paginated(
-            next_url=f'{BASE}/messages?offset=20', count=30))
-        messages = Messages(client)
-        messages.list()
-        messages.next()
-        self.assertEqual(client.calls[1]['uri'], f'{BASE}/messages?offset=20')
+            next_url=f'{BASE}/groups?offset=20', count=30))
+        groups = Groups(client)
+        groups.list()
+        groups.next()
+        self.assertEqual(client.calls[1]['uri'], f'{BASE}/groups?offset=20')
 
     def test_previous_uses_returned_url(self):
         """Previous page follows the URL returned by the API."""
         client = RecordingClient(paginated(
-            previous=f'{BASE}/messages?offset=0', count=30))
-        messages = Messages(client)
-        messages.list()
-        messages.previous()
-        self.assertEqual(client.calls[1]['uri'], f'{BASE}/messages?offset=0')
+            previous=f'{BASE}/groups?offset=0', count=30))
+        groups = Groups(client)
+        groups.list()
+        groups.previous()
+        self.assertEqual(client.calls[1]['uri'], f'{BASE}/groups?offset=0')
+
+    def test_managers_without_list_endpoint(self):
+        """Managers without a GET list endpoint expose no list or pagination."""
+        client = RecordingClient()
+        for manager in (Messages(client), Verifications(client)):
+            self.assertFalse(hasattr(manager, 'list'))
+            self.assertFalse(hasattr(manager, 'next'))
+            self.assertFalse(hasattr(manager, 'previous'))
 
     def test_non_paginated_body(self):
         """A plain list response does not break pagination."""

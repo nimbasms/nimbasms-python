@@ -1,9 +1,9 @@
 """Sender name service."""
 
-from nimbasms.resources.base import BaseRest
+from nimbasms.resources.base import PaginatedRest
 
 
-class SenderNames(BaseRest):
+class SenderNames(PaginatedRest):
     """
     Manage SenderName service.
     """
