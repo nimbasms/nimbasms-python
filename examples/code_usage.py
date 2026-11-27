@@ -1,8 +1,7 @@
 """
 Module example code usage:
 
-Ce module fournit les fonctions nécessaires
-pour envoyer des SMS via l'api Nimba SMS avec le SDK python.
+This module provides examples for the main services of the Nimba SMS API.
 """
 
 import os
@@ -14,95 +13,182 @@ ACCOUNT_SID = os.environ.get('NIMBA_ACCOUNT_SID')
 AUTH_TOKEN = os.environ.get('NIMBA_AUTH_TOKEN')
 
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
-logging.basicConfig()
-logging.basicConfig(filename='./log.txt') # or loging in file
+logging.basicConfig(filename='./log.txt')
 client.http_client.logger.setLevel(logging.INFO)
 
+
 def check_balance():
-    """
-    Check balance sms
-    """
+    """Check the balances of the account."""
     response = client.accounts.get()
     if response.ok:
-        my_account = response.data
-        print(f"My Account balance : {my_account['balance']}")
+        account = response.data
+        print(f"SMS balance : {account['sms_balance']}")
+        print(f"WhatsApp balance : {account['whatsapp_balance']}")
+        print(f"Email balance : {account['email_balance']}")
+
+
+def get_purchases():
+    """List the latest purchases."""
+    response = client.purchases.list(limit=10)
+    if response.ok:
+        print(f"There are {response.data['count']} purchases")
+        for purchase in response.data['results']:
+            print(purchase)
 
 
 def get_groups():
-    """
-    get groups list
-    """
+    """Get the groups list."""
     response = client.groups.list()
     if response.ok:
-        all_groups = response.data
-        print(f'There are {len(all_groups)} groupes')
+        print(f"There are {response.data['count']} groups")
+        print(response.data['results'])
 
 
 def get_sendernames():
-    """
-    Get sendername validated
-    """
+    """Get validated sender names."""
     response = client.sendernames.list()
     if response.ok:
-        all_sendernames = response.data
-        for item in all_sendernames:
+        for item in response.data['results']:
             print(item)
 
 
 def add_contact():
-    """
-    process contact added
-    """
+    """Add contacts to the default list and to groups."""
     response = client.contacts.list()
     if response.ok:
-        all_contacts = response.data
-        for item in all_contacts:
-            print(item)
+        for contact in response.data['results']:
+            print(contact)
 
-    # This contact will be added to the default contact list
-    response = client.contacts.create(numero='224XXXXXXXXX')
+    response = client.contacts.create(numero='+224625126703')
     if response.ok:
         print(response.data)
-    # Create with groups and name - name and groups are optional.
+
     response = client.contacts.create(
-        numero='224XXXXXXXXX', name='Foo', groups=['API', 'Facebook Client'])
+        numero='+224625126703', name='Foo', groups=['API', 'Facebook Client'])
+    if response.ok:
+        print(response.data)
+
+    response = client.contacts.create(
+        numero='+224625126703', email='foo@example.com', groups=['API'])
     if response.ok:
         print(response.data)
 
 
 def send_message():
-    """
-    Send message
-    """
-    response = client.messages.list()
-    if response.ok:
-        all_messages = response.data
-        print(f'There are {len(all_messages)} messages in your account.')
-
-    # Get only last 10 messages
-    response = client.messages.list(limit=10)
-    if response.ok:
-        some_messages = response.data
-        print('Here are the last 10 messages in your account:')
-        for message in some_messages:
-            print(message)
-
-    # send message...
+    """Send and retrieve SMS messages."""
     print('Sending a message...')
-    response = client.messages.create(to=['XXXX'],
-                sender_name='YYYY', message='Hi Nimba!')
+    response = client.messages.create(
+        to=['XXXX'], sender_name='YYYY', message='Hi Nimba!')
     if response.ok:
         print(f'message response : {response.data}')
 
-    # Retrieve message
+    response = client.messages.get(messageid='XXXXXXXXXXXXXXXXXXXXX')
+    if response.ok:
+        print(f"Message retrieve : {response.data}")
+
+
+def send_whatsapp_message():
+    """Send a WhatsApp message with a validated template."""
+    response = client.messages.create(
+        to=['+224625126703'], sender_name='CashMoov', channel='whatsapp',
+        template_name='info',
+        template_variables={'body': {'1': 'value 1', "2": 'value 2'}})
+    if response.ok:
+        print(f'WhatsApp response : {response.data}')
+    else :
+        print(response.data)
+
+
+def send_email():
+    """Send an email with an HTML version and an attachment."""
+    response = client.messages.create(
+        to=['client@example.com'], sender_name='YYYY', channel='email',
+        subject='Your invoice', message='Plain text version',
+        html='<p>HTML version</p>', reply_to=['support@example.com'],
+        attachments=[{'filename': 'invoice.pdf', 'content': '<base64>'}])
+    if response.ok:
+        print(f'Email response : {response.data}')
+
+
+def create_verification():
+    """Request a verification code by SMS and by email."""
+    response = client.verifications.create(
+        email='sumptring@gmail.com', code_length=5, email_sender_name="sirapay@notification.nimbacore.com", channels=["email"], message='Your verification code is: <1234>',
+        expiry_time=5)
+    if response.ok:
+        print(f"Verification request : {response.data}")
+    else :
+        print(response.data)
+
+    response = client.verifications.create(
+        channels=['email'], email='client@example.com',
+        email_sender_name='no-reply@example.com')
+    if response.ok:
+        print(f"Email verification request : {response.data}")
+
+
+def verify_code():
+    """Check a verification code."""
+    response = client.verifications.verify(
+        verificationid='e132dc0f-2fa8-46f6-8d0b-1618bb74541f', code='41747')
+    if response.ok:
+        print(f"Verification result : {response.data}")
+    else:
+        print(response.data)
+
+
+def list_extensions():
+    """List the extensions available on the account."""
+    response = client.extensions.list(limit=10)
+    if response.ok:
+        for extension in response.data['results']:
+            print(extension)
+
+
+def get_contacts():
+    """List contacts."""
+    response = client.contacts.list()
+    if response.ok:
+        for contact in response.data['results']:
+            print(contact)
+
+
+def retrieve_message():
+    """Retrieve a message with the historical method name."""
     response = client.messages.retrieve(messageid='XXXXXXXXXXXXXXXXXXXXX')
     if response.ok:
         print(f"Message retrieve : {response.data}")
 
 
+def create_verification_whatsapp():
+    """Request a verification code by WhatsApp."""
+    response = client.verifications.create(
+        to='+123456789', channels=['whatsapp'], sender_name='YYYY')
+    if response.ok:
+        print(f"WhatsApp verification request : {response.data}")
+
+
+def create_verification_multi_channel():
+    """Request a verification code on several channels."""
+    response = client.verifications.create(
+        to='+123456789', channels=['sms', 'whatsapp', 'email'],
+        sender_name='YYYY', whatsapp_sender_name='YYYY',
+        email='client@example.com', email_sender_name='no-reply@example.com',
+        email_template_name='verification', email_subject='Your verification code',
+        expiry_time=10, attempts=3, code_length=6, language='en')
+    if response.ok:
+        print(f"Multi-channel verification request : {response.data}")
+
+
 if __name__ == '__main__':
     check_balance()
+    get_purchases()
     get_groups()
     get_sendernames()
     add_contact()
     send_message()
+    send_whatsapp_message()
+    send_email()
+    create_verification()
+    verify_code()
+    list_extensions()

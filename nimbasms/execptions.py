@@ -1,8 +1,5 @@
-"""
-Exception module for this project.
-"""
+"""Backward-compatible alias for :mod:`nimbasms.exceptions`."""
 
-class NimbaSMSException(Exception):
-    """
-    Module exception for project
-    """
+from nimbasms.exceptions import NimbaSMSException
+
+__all__ = ['NimbaSMSException']
